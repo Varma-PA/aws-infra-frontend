@@ -2,7 +2,7 @@ resource "aws_s3_bucket" "frontend_bucket" {
 
   bucket = "dev.achyuthvarma.me"
 
-#   acl = "public-read"  
+  #   acl = "public-read"  
 
   force_destroy = true
 
