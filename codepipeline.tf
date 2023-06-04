@@ -1,5 +1,8 @@
 resource "aws_codepipeline" "Code_Pipeline" {
 
+  # Very important to mention depends on and making sure iam role has been created first
+  depends_on = [aws_codebuild_project.build_react_project, aws_iam_role.codepipeline_role]
+
   name = "Terraform_test_codepipeline"
 
   artifact_store {
@@ -87,7 +90,7 @@ data "aws_iam_policy_document" "assume_role" {
 }
 
 resource "aws_iam_role" "codepipeline_role" {
-  name               = "test-role"
+  name               = "codepipeline-role"
   assume_role_policy = data.aws_iam_policy_document.assume_role.json
 }
 
@@ -110,8 +113,12 @@ data "aws_iam_policy_document" "codepipeline_policy" {
   }
 
   statement {
-    effect    = "Allow"
-    actions   = ["codestar-connections:UseConnection"]
+    sid    = "GithubConnections"
+    effect = "Allow"
+    actions = [
+      "codestar-connections:UseConnection",
+      "codestar-connections:GetConnection"
+    ]
     resources = ["*"]
   }
 
