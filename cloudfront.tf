@@ -33,7 +33,7 @@ resource "aws_cloudfront_distribution" "s3_cdn_distribution" {
     max_ttl                = 86400
   }
 
-  aliases = ["dev.achyuthvarma.me"]  
+  aliases = ["dev.achyuthvarma.me"]
 
   restrictions {
     geo_restriction {
@@ -45,7 +45,7 @@ resource "aws_cloudfront_distribution" "s3_cdn_distribution" {
   viewer_certificate {
     # cloudfront_default_certificate = true
     acm_certificate_arn = aws_acm_certificate.aws_certificate_manager.arn
-    ssl_support_method = "sni-only"
+    ssl_support_method  = "sni-only"
   }
 
 }

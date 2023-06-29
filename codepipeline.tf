@@ -68,6 +68,34 @@ resource "aws_codepipeline" "Code_Pipeline" {
     }
   }
 
+  stage {
+
+    name = "Lambda-Cache-Invalidation"
+
+    action {
+      name            = "Cache-Invalidate"
+      category        = "Invoke"
+      owner           = "AWS"
+      provider        = "Lambda"
+      version         = "1"
+      input_artifacts = ["build_output"]
+
+      configuration = {
+        FunctionName = aws_lambda_function.terraform_lambda_func.function_name
+        # UserParamters = { "distributionId" : aws_cloudfront_distribution.s3_cdn_distribution.id, "objectPaths" : ["/*"] }
+        UserParameters = jsonencode(
+          {
+            document = {
+              "distributionId" : aws_cloudfront_distribution.s3_cdn_distribution.id,
+              "objectPaths" : ["/*"]
+            }
+          }
+        )
+      }
+    }
+
+  }
+
 
 }
 
@@ -143,8 +171,15 @@ data "aws_iam_policy_document" "codepipeline_policy" {
     resources = ["*"]
   }
 
+  statement {
+    effect = "Allow"
 
+    actions = [
+      "lambda:InvokeFunction",
+    ]
 
+    resources = ["*"]
+  }
 }
 
 resource "aws_iam_role_policy" "codepipeline_policy" {

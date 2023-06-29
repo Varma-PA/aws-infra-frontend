@@ -22,16 +22,16 @@ resource "aws_route53_record" "myrecord" {
 }
 
 resource "aws_route53_record" "certifying_dns" {
-#   allow_overwrite = true
-  name =  tolist(aws_acm_certificate.aws_certificate_manager.domain_validation_options)[0].resource_record_name
-#   name = "dev.achyuthvarma.me"
+  #   allow_overwrite = true
+  name = tolist(aws_acm_certificate.aws_certificate_manager.domain_validation_options)[0].resource_record_name
+  #   name = "dev.achyuthvarma.me"
   records = [tolist(aws_acm_certificate.aws_certificate_manager.domain_validation_options)[0].resource_record_value]
-  type = tolist(aws_acm_certificate.aws_certificate_manager.domain_validation_options)[0].resource_record_type
+  type    = tolist(aws_acm_certificate.aws_certificate_manager.domain_validation_options)[0].resource_record_type
   zone_id = data.aws_route53_zone.selected.zone_id
-  ttl = 60
+  ttl     = 60
 }
 
 resource "aws_acm_certificate_validation" "hello_cert_validate" {
-  certificate_arn = aws_acm_certificate.aws_certificate_manager.arn
+  certificate_arn         = aws_acm_certificate.aws_certificate_manager.arn
   validation_record_fqdns = [aws_route53_record.certifying_dns.fqdn]
 }
